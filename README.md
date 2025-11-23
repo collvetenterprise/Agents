@@ -16,7 +16,7 @@ You can get started right here by scolling up and clicking the 'samples' folder 
 
 Microsoft 365 Copilot is one of many channels supported by this SDK, and a *Microsoft 365 Copilot subscription is *not* required* to get started with or use this SDK unless your working specifically with that channel (or others, that require a subscription/service to use their client).
 
-## C#, JavaScript & Python Repository links
+## C#, JavaScript, Python & Android Repository links
 
 The source for the client libraries exists for the most part in repositories for each language. This repository is meant to be a jumping off point into those language specific repositories. Issues related to a specific language should be opened in the corresponding repository but cross cutting issues can be opened in this repository.
 
@@ -25,7 +25,21 @@ The source for the client libraries exists for the most part in repositories for
 | General (This repo)     |[Agents Repository]               |   
 | C# /.NET    |[Agents-for-net Repository]       | 
 | JavaScript  |[Agents-for-js Repository]        | 
-| Python      |[Agents-for-python Repository]    
+| Python      |[Agents-for-python Repository]    |
+| Android     |[Android Samples](samples/android)|
+
+## Android Platform Support
+
+The Microsoft 365 Agents SDK now includes comprehensive Android support, enabling mobile agent development with enterprise-grade features:
+
+- **Native Android Development**: Kotlin-based samples with Jetpack Compose
+- **Cross-Platform Options**: React Native and .NET MAUI support
+- **GitHub Copilot Integration**: AI-powered development on Android
+- **MCP Support**: Model Context Protocol for enhanced AI interactions
+- **Enterprise Features**: Multi-tenant, security, and scalability
+- **PC-Like Capabilities**: Desktop-class functionality on mobile devices
+
+Get started with Android: See [ANDROID_SETUP.md](ANDROID_SETUP.md) for detailed setup instructions and [samples/android](samples/android) for code examples    
 
 ## Documentation
 

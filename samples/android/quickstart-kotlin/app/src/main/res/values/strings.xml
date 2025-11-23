@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">M365 Agent</string>
+    <string name="welcome_message">Welcome to M365 Agent Quickstart</string>
+    <string name="type_message_hint">Type a message...</string>
+    <string name="send">Send</string>
+    <string name="error_sending_message">Error sending message</string>
+    <string name="connecting">Connecting to agent...</string>
+    <string name="offline_mode">Offline mode - messages will be sent when connection is restored</string>
+</resources>
