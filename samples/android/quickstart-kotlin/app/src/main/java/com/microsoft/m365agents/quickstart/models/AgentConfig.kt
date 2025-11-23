@@ -3,26 +3,42 @@ package com.microsoft.m365agents.quickstart.models
 /**
  * Configuration for the M365 Agent.
  * 
- * Update these values with your actual configuration.
+ * IMPORTANT: Do not hardcode sensitive values in production.
+ * Use BuildConfig, environment variables, or secure configuration management.
+ * 
+ * For production, consider:
+ * 1. BuildConfig fields defined in build.gradle.kts
+ * 2. Reading from encrypted SharedPreferences
+ * 3. Fetching from a secure backend service
+ * 4. Using Android Keystore for sensitive data
  */
 object AgentConfig {
     /**
      * Your Microsoft 365 tenant ID.
      * Get this from Azure Portal > Azure Active Directory > Properties > Tenant ID
+     * 
+     * Production: Use BuildConfig.TENANT_ID or fetch from secure backend
      */
-    const val TENANT_ID = "your-tenant-id-here"
+    val TENANT_ID: String
+        get() = System.getenv("M365_TENANT_ID") ?: "your-tenant-id-here"
     
     /**
      * Your application client ID.
      * Register your app in Azure Portal > App Registrations
+     * 
+     * Production: Use BuildConfig.CLIENT_ID or fetch from secure backend
      */
-    const val CLIENT_ID = "your-client-id-here"
+    val CLIENT_ID: String
+        get() = System.getenv("M365_CLIENT_ID") ?: "your-client-id-here"
     
     /**
      * Agent endpoint URL (optional for local development).
      * Point this to your deployed agent or use localhost for testing.
+     * 
+     * Production: Use BuildConfig.AGENT_ENDPOINT or fetch from configuration service
      */
-    const val AGENT_ENDPOINT = "https://your-agent-endpoint.com"
+    val AGENT_ENDPOINT: String
+        get() = System.getenv("M365_AGENT_ENDPOINT") ?: "https://your-agent-endpoint.com"
     
     /**
      * Enable GitHub Copilot integration.

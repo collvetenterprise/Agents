@@ -166,26 +166,52 @@ For programmatic access to Copilot capabilities:
 // Copilot API integration example
 import { CopilotClient } from '@github/copilot-api';
 
-const copilot = new CopilotClient({
-    apiKey: process.env.COPILOT_API_KEY
-});
-
 async function getCodeSuggestion(prompt: string, context: string) {
-    const suggestion = await copilot.complete({
-        prompt: prompt,
-        context: context,
-        language: 'typescript',
-        maxTokens: 150
-    });
+    // Validate API key is present
+    const apiKey = process.env.COPILOT_API_KEY;
+    if (!apiKey) {
+        throw new Error('COPILOT_API_KEY environment variable is not set');
+    }
     
-    return suggestion.choices[0].text;
+    // Validate API key format (basic check)
+    if (apiKey.length < 20) {
+        throw new Error('COPILOT_API_KEY appears to be invalid (too short)');
+    }
+    
+    const copilot = new CopilotClient({
+        apiKey: apiKey
+    });
+
+    try {
+        const suggestion = await copilot.complete({
+            prompt: prompt,
+            context: context,
+            language: 'typescript',
+            maxTokens: 150
+        });
+        
+        if (!suggestion.choices || suggestion.choices.length === 0) {
+            throw new Error('No suggestions returned from Copilot API');
+        }
+        
+        return suggestion.choices[0].text;
+    } catch (error) {
+        console.error('Error calling Copilot API:', error);
+        throw error;
+    }
 }
 
-// Use in agent
-const agentCode = await getCodeSuggestion(
-    'Create activity handler',
-    'M365 Agents SDK context'
-);
+// Use in agent with error handling
+try {
+    const agentCode = await getCodeSuggestion(
+        'Create activity handler',
+        'M365 Agents SDK context'
+    );
+    console.log('Generated code:', agentCode);
+} catch (error) {
+    console.error('Failed to generate code:', error.message);
+    // Fallback to template or manual implementation
+}
 ```
 
 ---

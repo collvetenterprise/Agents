@@ -86,8 +86,14 @@ deploy_to_device() {
     echo -e "${YELLOW}Installing APK...${NC}"
     adb install -r "$APK_PATH"
     
-    # Get package name
-    PACKAGE_NAME=$(grep "applicationId" app/build.gradle.kts | sed 's/.*"\(.*\)".*/\1/')
+    # Get package name from APK using aapt (more reliable)
+    AAPT_PATH="$ANDROID_HOME/build-tools/$(ls $ANDROID_HOME/build-tools | sort -V | tail -n 1)/aapt"
+    if [ -f "$AAPT_PATH" ]; then
+        PACKAGE_NAME=$($AAPT_PATH dump badging "$APK_PATH" | grep package: | awk '{print $2}' | sed s/name=//g | sed s/\'//g)
+    else
+        # Fallback to grep/sed method with more robust pattern
+        PACKAGE_NAME=$(grep -E 'applicationId\s*=\s*"[^"]*"' app/build.gradle.kts | sed -E 's/.*applicationId\s*=\s*"([^"]*)".*/\1/' || echo "com.microsoft.m365agents.quickstart")
+    fi
     
     echo -e "${GREEN}✓ App installed successfully${NC}"
     echo -e "\n${BLUE}To launch the app:${NC}"
@@ -119,10 +125,29 @@ deploy_to_emulator() {
         echo -e "${YELLOW}Starting AVD: $FIRST_AVD${NC}"
         emulator -avd "$FIRST_AVD" -no-snapshot-load &
         
-        # Wait for emulator
-        echo -e "${YELLOW}Waiting for emulator to boot...${NC}"
+        # Wait for emulator to fully boot
+        echo -e "${YELLOW}Waiting for emulator to boot completely...${NC}"
         adb wait-for-device
-        sleep 10
+        
+        # Poll until boot is complete (more reliable than fixed sleep)
+        BOOT_COMPLETE=""
+        TIMEOUT=120
+        ELAPSED=0
+        while [ "$BOOT_COMPLETE" != "1" ] && [ $ELAPSED -lt $TIMEOUT ]; do
+            BOOT_COMPLETE=$(adb shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')
+            if [ "$BOOT_COMPLETE" != "1" ]; then
+                sleep 2
+                ELAPSED=$((ELAPSED + 2))
+                echo -ne "\r${YELLOW}Booting... ${ELAPSED}s${NC}"
+            fi
+        done
+        echo ""
+        
+        if [ "$BOOT_COMPLETE" != "1" ]; then
+            echo -e "${RED}Warning: Emulator boot timeout. Proceeding anyway...${NC}"
+        else
+            echo -e "${GREEN}✓ Emulator fully booted${NC}"
+        fi
     fi
     
     echo -e "${GREEN}✓ Emulator ready${NC}"
