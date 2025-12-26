@@ -313,6 +313,6 @@ Set up automatic token rotation:
 ## Getting Help
 
 - Open an issue on [GitHub](https://github.com/Microsoft/Agents/issues)
-- Review [Microsoft 365 Agents SDK Docs](https://aka.ms/M365-Agents-SDK-Docs)
+- Review [Microsoft 365 Agents SDK Documentation](https://aka.ms/M365-Agents-SDK-Docs)
 - Check [Azure DevOps REST API Docs](https://docs.microsoft.com/en-us/rest/api/azure/devops/)
 - See [Partner Center API Docs](https://docs.microsoft.com/en-us/partner-center/develop/)

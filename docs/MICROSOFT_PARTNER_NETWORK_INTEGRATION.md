@@ -73,7 +73,7 @@ Microsoft Partner Network integration enables your agents to:
 1. Go to "API permissions" in your app
 2. Click "Add a permission"
 3. Select "APIs my organization uses"
-4. Search for "Microsoft Partner Center" or use application ID: `fa3d9a0c-3fb0-42cc-9193-47c7ecd2edbd`
+4. Search for "Microsoft Partner Center"
 5. Select "user_impersonation" permission
 6. Click "Grant admin consent" (requires admin privileges)
 
