@@ -1,0 +1,60 @@
+{
+  "$schema": "./access-management-schema.json",
+  "version": "1.0",
+  "azureDevOps": {
+    "enabled": true,
+    "organizationUrl": "https://dev.azure.com/your-organization",
+    "projectName": "YourProject",
+    "authentication": {
+      "type": "pat",
+      "token": "${AZURE_DEVOPS_PAT}"
+    },
+    "permissions": {
+      "scopes": [
+        "vso.work",
+        "vso.build",
+        "vso.code"
+      ]
+    },
+    "rateLimiting": {
+      "maxRequestsPerMinute": 60,
+      "retryAttempts": 3
+    }
+  },
+  "microsoftPartnerNetwork": {
+    "enabled": true,
+    "tenantId": "${MPN_TENANT_ID}",
+    "clientId": "${MPN_CLIENT_ID}",
+    "clientSecret": "${MPN_CLIENT_SECRET}",
+    "partnerId": "${MPN_PARTNER_ID}",
+    "authentication": {
+      "authority": "https://login.microsoftonline.com/",
+      "scopes": [
+        "https://api.partnercenter.microsoft.com/user_impersonation"
+      ]
+    },
+    "apiVersion": "v1"
+  },
+  "credentialStore": {
+    "type": "azure-keyvault",
+    "vaultUrl": "https://your-keyvault.vault.azure.net/",
+    "credentials": {
+      "azureDevOpsPat": "azure-devops-pat-secret",
+      "mpnClientSecret": "mpn-client-secret"
+    }
+  },
+  "audit": {
+    "enabled": true,
+    "logLevel": "info",
+    "destination": "azure-monitor"
+  },
+  "security": {
+    "tokenRotationEnabled": true,
+    "tokenRotationIntervalDays": 90,
+    "requireMfa": true,
+    "allowedIpRanges": [
+      "10.0.0.0/8",
+      "172.16.0.0/12"
+    ]
+  }
+}

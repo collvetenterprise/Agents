@@ -1,0 +1,34 @@
+{
+  "$schema": "./access-management-schema.json",
+  "version": "1.0",
+  "microsoftPartnerNetwork": {
+    "enabled": true,
+    "tenantId": "${MPN_TENANT_ID}",
+    "clientId": "${MPN_CLIENT_ID}",
+    "clientSecret": "${MPN_CLIENT_SECRET}",
+    "partnerId": "${MPN_PARTNER_ID}",
+    "authentication": {
+      "authority": "https://login.microsoftonline.com/",
+      "scopes": [
+        "https://api.partnercenter.microsoft.com/user_impersonation"
+      ]
+    },
+    "apiVersion": "v1"
+  },
+  "credentialStore": {
+    "type": "environment",
+    "credentials": {
+      "mpnClientSecret": "MPN_CLIENT_SECRET"
+    }
+  },
+  "audit": {
+    "enabled": true,
+    "logLevel": "info",
+    "destination": "console"
+  },
+  "security": {
+    "tokenRotationEnabled": true,
+    "tokenRotationIntervalDays": 90,
+    "requireMfa": false
+  }
+}

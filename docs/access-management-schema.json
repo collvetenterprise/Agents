@@ -1,0 +1,286 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Access Management Configuration Schema",
+  "description": "Configuration schema for Azure DevOps and Microsoft Partner Network access management",
+  "type": "object",
+  "properties": {
+    "version": {
+      "type": "string",
+      "description": "Configuration version",
+      "default": "1.0"
+    },
+    "azureDevOps": {
+      "type": "object",
+      "description": "Azure DevOps integration configuration",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Enable Azure DevOps integration",
+          "default": false
+        },
+        "organizationUrl": {
+          "type": "string",
+          "description": "Azure DevOps organization URL",
+          "pattern": "^https://dev\\.azure\\.com/[a-zA-Z0-9-]+$",
+          "examples": ["https://dev.azure.com/myorganization"]
+        },
+        "projectName": {
+          "type": "string",
+          "description": "Default project name",
+          "minLength": 1
+        },
+        "authentication": {
+          "type": "object",
+          "description": "Authentication configuration",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": ["pat", "oauth", "managed-identity"],
+              "description": "Authentication type"
+            },
+            "token": {
+              "type": "string",
+              "description": "Personal Access Token or environment variable reference"
+            },
+            "clientId": {
+              "type": "string",
+              "description": "OAuth client ID (for oauth type)"
+            },
+            "clientSecret": {
+              "type": "string",
+              "description": "OAuth client secret (for oauth type)"
+            },
+            "tenantId": {
+              "type": "string",
+              "description": "Azure AD tenant ID (for oauth type)"
+            }
+          },
+          "required": ["type"],
+          "allOf": [
+            {
+              "if": {
+                "properties": { "type": { "const": "pat" } }
+              },
+              "then": {
+                "required": ["token"]
+              }
+            },
+            {
+              "if": {
+                "properties": { "type": { "const": "oauth" } }
+              },
+              "then": {
+                "required": ["clientId", "clientSecret", "tenantId"]
+              }
+            }
+          ]
+        },
+        "permissions": {
+          "type": "object",
+          "description": "Permission configuration",
+          "properties": {
+            "scopes": {
+              "type": "array",
+              "description": "Required permission scopes",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "vso.work",
+                  "vso.work_write",
+                  "vso.build",
+                  "vso.build_execute",
+                  "vso.code",
+                  "vso.code_write",
+                  "vso.release",
+                  "vso.release_execute"
+                ]
+              },
+              "default": ["vso.work", "vso.build", "vso.code"]
+            }
+          }
+        },
+        "rateLimiting": {
+          "type": "object",
+          "description": "Rate limiting configuration",
+          "properties": {
+            "maxRequestsPerMinute": {
+              "type": "integer",
+              "description": "Maximum requests per minute",
+              "minimum": 1,
+              "default": 60
+            },
+            "retryAttempts": {
+              "type": "integer",
+              "description": "Number of retry attempts",
+              "minimum": 0,
+              "default": 3
+            }
+          }
+        }
+      },
+      "required": ["organizationUrl", "authentication"]
+    },
+    "microsoftPartnerNetwork": {
+      "type": "object",
+      "description": "Microsoft Partner Network integration configuration",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Enable Microsoft Partner Network integration",
+          "default": false
+        },
+        "tenantId": {
+          "type": "string",
+          "description": "Azure AD tenant ID",
+          "pattern": "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$"
+        },
+        "clientId": {
+          "type": "string",
+          "description": "Application client ID",
+          "pattern": "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$"
+        },
+        "clientSecret": {
+          "type": "string",
+          "description": "Application client secret or environment variable reference"
+        },
+        "partnerId": {
+          "type": "string",
+          "description": "Microsoft Partner Network ID"
+        },
+        "authentication": {
+          "type": "object",
+          "description": "Authentication configuration",
+          "properties": {
+            "authority": {
+              "type": "string",
+              "description": "Authentication authority URL",
+              "default": "https://login.microsoftonline.com/"
+            },
+            "scopes": {
+              "type": "array",
+              "description": "Required permission scopes",
+              "items": {
+                "type": "string"
+              },
+              "default": ["https://api.partnercenter.microsoft.com/user_impersonation"]
+            }
+          }
+        },
+        "apiVersion": {
+          "type": "string",
+          "description": "Partner Center API version",
+          "default": "v1"
+        }
+      },
+      "required": ["tenantId", "clientId", "clientSecret", "partnerId"]
+    },
+    "credentialStore": {
+      "type": "object",
+      "description": "Credential storage configuration",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["azure-keyvault", "environment", "file", "memory"],
+          "description": "Credential storage type",
+          "default": "environment"
+        },
+        "vaultUrl": {
+          "type": "string",
+          "description": "Azure Key Vault URL (for azure-keyvault type)",
+          "pattern": "^https://[a-zA-Z0-9-]+\\.vault\\.azure\\.net/$"
+        },
+        "filePath": {
+          "type": "string",
+          "description": "Path to credentials file (for file type)"
+        },
+        "credentials": {
+          "type": "object",
+          "description": "Credential mappings",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      },
+      "required": ["type"],
+      "allOf": [
+        {
+          "if": {
+            "properties": { "type": { "const": "azure-keyvault" } }
+          },
+          "then": {
+            "required": ["vaultUrl"]
+          }
+        },
+        {
+          "if": {
+            "properties": { "type": { "const": "file" } }
+          },
+          "then": {
+            "required": ["filePath"]
+          }
+        }
+      ]
+    },
+    "audit": {
+      "type": "object",
+      "description": "Audit logging configuration",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Enable audit logging",
+          "default": true
+        },
+        "logLevel": {
+          "type": "string",
+          "enum": ["verbose", "info", "warning", "error"],
+          "description": "Audit log level",
+          "default": "info"
+        },
+        "destination": {
+          "type": "string",
+          "enum": ["console", "file", "azure-monitor"],
+          "description": "Audit log destination",
+          "default": "console"
+        },
+        "filePath": {
+          "type": "string",
+          "description": "Log file path (for file destination)"
+        }
+      }
+    },
+    "security": {
+      "type": "object",
+      "description": "Security configuration",
+      "properties": {
+        "tokenRotationEnabled": {
+          "type": "boolean",
+          "description": "Enable automatic token rotation",
+          "default": false
+        },
+        "tokenRotationIntervalDays": {
+          "type": "integer",
+          "description": "Token rotation interval in days",
+          "minimum": 1,
+          "default": 90
+        },
+        "requireMfa": {
+          "type": "boolean",
+          "description": "Require multi-factor authentication",
+          "default": false
+        },
+        "allowedIpRanges": {
+          "type": "array",
+          "description": "Allowed IP ranges (CIDR notation)",
+          "items": {
+            "type": "string",
+            "pattern": "^([0-9]{1,3}\\.){3}[0-9]{1,3}/[0-9]{1,2}$"
+          }
+        }
+      }
+    }
+  },
+  "anyOf": [
+    { "required": ["azureDevOps"] },
+    { "required": ["microsoftPartnerNetwork"] }
+  ]
+}
