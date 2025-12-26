@@ -1,0 +1,40 @@
+{
+  "$schema": "./access-management-schema.json",
+  "version": "1.0",
+  "azureDevOps": {
+    "enabled": true,
+    "organizationUrl": "https://dev.azure.com/your-organization",
+    "projectName": "YourProject",
+    "authentication": {
+      "type": "pat",
+      "token": "${AZURE_DEVOPS_PAT}"
+    },
+    "permissions": {
+      "scopes": [
+        "vso.work",
+        "vso.build",
+        "vso.code"
+      ]
+    },
+    "rateLimiting": {
+      "maxRequestsPerMinute": 60,
+      "retryAttempts": 3
+    }
+  },
+  "credentialStore": {
+    "type": "environment",
+    "credentials": {
+      "azureDevOpsPat": "AZURE_DEVOPS_PAT"
+    }
+  },
+  "audit": {
+    "enabled": true,
+    "logLevel": "info",
+    "destination": "console"
+  },
+  "security": {
+    "tokenRotationEnabled": true,
+    "tokenRotationIntervalDays": 90,
+    "requireMfa": false
+  }
+}

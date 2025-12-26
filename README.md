@@ -29,7 +29,22 @@ The source for the client libraries exists for the most part in repositories for
 
 ## Documentation
 
-To learn more about the Agents SDK, you can read our official docs here: [Agents SDK Documentation](https://aka.ms/M365-Agents-SDK-Docs) 
+To learn more about the Agents SDK, you can read our official docs here: [Agents SDK Documentation](https://aka.ms/M365-Agents-SDK-Docs)
+
+### Access Management
+
+The SDK includes comprehensive access management capabilities for enterprise integrations:
+
+- **[Access Management Guide](docs/ACCESS_MANAGEMENT.md)** - Complete guide for Azure DevOps and Microsoft Partner Network integration
+- **[Getting Started](docs/GETTING_STARTED_ACCESS_MANAGEMENT.md)** - Quick start guide for setting up access management
+- **[Configuration Schema](docs/access-management-schema.json)** - JSON schema for access management configuration
+
+Features include:
+- Azure DevOps integration for CI/CD pipelines and work item tracking
+- Microsoft Partner Network access for partner benefits and resources
+- Role-based access control (RBAC)
+- Secure token management with Azure Key Vault support
+- Audit logging and compliance features 
 
 ## Related SDKs and Agent Platforms
 
