@@ -38,7 +38,7 @@ function Ensure-Elevation {
       ($argsList -join " ")
     ) -join " "
 
-    Start-Process -FilePath "powershell.exe" -Verb RunAs -ArgumentList $argString | Out-Null
+    Start-Process -FilePath "powershell.exe" -Verb RunAs -ArgumentList $argString
     exit
   }
 }
@@ -96,7 +96,7 @@ function Ensure-PowerPlatformCLI {
     Write-Host "Microsoft's MSI method: download and run powerapps-cli-1.0.msi." -ForegroundColor Gray
     Write-Host "Docs: Install Power Platform CLI using Windows MSI." -ForegroundColor Gray
     # Open docs to download instructions (interactive)
-    Start-Process "https://learn.microsoft.com/en-us/power-platform/developer/howto/install-cli-msi" | Out-Null
+    Start-Process "https://learn.microsoft.com/en-us/power-platform/developer/howto/install-cli-msi"
   }
 
   # 3) Secondary fallback: .NET tool
@@ -113,7 +113,7 @@ function Ensure-PowerPlatformCLI {
   } else {
     Write-Warning "dotnet not found; cannot use .NET tool fallback."
     Write-Host "Docs: Install Power Platform CLI with .NET Tool." -ForegroundColor Gray
-    Start-Process "https://learn.microsoft.com/en-us/power-platform/developer/howto/install-cli-net-tool" | Out-Null
+    Start-Process "https://learn.microsoft.com/en-us/power-platform/developer/howto/install-cli-net-tool"
   }
 
   throw "Failed to install Power Platform CLI (pac)."
