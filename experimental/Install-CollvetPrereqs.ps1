@@ -63,7 +63,13 @@ function Ensure-PSModule {
 }
 
 function Test-Winget {
-  try { & winget --version | Out-Null; return $true } catch { return $false }
+  try { 
+    $ErrorActionPreference = 'Stop'
+    & winget --version | Out-Null
+    return ($LASTEXITCODE -eq 0)
+  } catch { 
+    return $false 
+  }
 }
 
 function Ensure-WingetPackage {
@@ -72,6 +78,10 @@ function Ensure-WingetPackage {
 
   Write-Host "Installing via winget: $Id" -ForegroundColor Yellow
   & winget install -e --id $Id --silent --accept-package-agreements --accept-source-agreements | Out-Null
+  if ($LASTEXITCODE -ne 0) {
+    Write-Warning "Winget installation returned exit code: $LASTEXITCODE"
+    return $false
+  }
   return $true
 }
 
@@ -94,9 +104,7 @@ function Ensure-PowerPlatformCLI {
   } else {
     Write-Warning "MSI fallback selected but PacMsiPath not provided."
     Write-Host "Microsoft's MSI method: download and run powerapps-cli-1.0.msi." -ForegroundColor Gray
-    Write-Host "Docs: Install Power Platform CLI using Windows MSI." -ForegroundColor Gray
-    # Open docs to download instructions (interactive)
-    Start-Process "https://learn.microsoft.com/en-us/power-platform/developer/howto/install-cli-msi" | Out-Null
+    Write-Host "Docs: https://learn.microsoft.com/en-us/power-platform/developer/howto/install-cli-msi" -ForegroundColor Gray
   }
 
   # 3) Secondary fallback: .NET tool
@@ -105,6 +113,9 @@ function Ensure-PowerPlatformCLI {
     & dotnet tool update --global Microsoft.PowerApps.CLI.Tool 2>$null
     if ($LASTEXITCODE -ne 0) {
       & dotnet tool install --global Microsoft.PowerApps.CLI.Tool
+      if ($LASTEXITCODE -ne 0) {
+        Write-Warning "dotnet tool install failed with exit code: $LASTEXITCODE"
+      }
     }
     if (Get-Command pac -ErrorAction SilentlyContinue) {
       Write-Host "✅ pac installed via .NET tool." -ForegroundColor Green
@@ -112,8 +123,7 @@ function Ensure-PowerPlatformCLI {
     }
   } else {
     Write-Warning "dotnet not found; cannot use .NET tool fallback."
-    Write-Host "Docs: Install Power Platform CLI with .NET Tool." -ForegroundColor Gray
-    Start-Process "https://learn.microsoft.com/en-us/power-platform/developer/howto/install-cli-net-tool" | Out-Null
+    Write-Host "Docs: https://learn.microsoft.com/en-us/power-platform/developer/howto/install-cli-net-tool" -ForegroundColor Gray
   }
 
   throw "Failed to install Power Platform CLI (pac)."
