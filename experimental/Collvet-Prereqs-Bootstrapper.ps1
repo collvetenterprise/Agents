@@ -2,9 +2,9 @@
 Collvet Prereqs Bootstrapper
 - Prompts for admin privileges (self-elevates)
 - Installs:
-  - O365CentralizedAddInDeployment (Centralized Deployment cmdlets)  [3](https://learn.microsoft.com/en-us/sharepoint/dev/features/hub-site/create-hub-site-with-powershell)[4](https://pnp.github.io/powershell/cmdlets/Register-PnPHubSite.html)
-  - Microsoft.Graph (Graph PowerShell SDK) [5](https://docs.github.com/en/copilot/how-tos/use-copilot-agents/coding-agent/review-copilot-prs)[6](https://docs.github.com/en/copilot/tutorials/explore-pull-requests)
-  - Power Platform CLI (pac) via winget; fallback MSI; fallback .NET tool [1](https://www.microsoft.com/content/dam/microsoft/msc/documents/presentations/nonprofits/pdfs/Microsoft-Nonprofit-Offers-Guide.pdf)[2](https://support.techsoup.org/hc/en-us/articles/12968116130075-How-do-I-access-donated-and-discounted-Microsoft-for-Nonprofits-products-on-TechSoup)
+  - O365CentralizedAddInDeployment (Centralized Deployment cmdlets)
+  - Microsoft.Graph (Graph PowerShell SDK)
+  - Power Platform CLI (pac) via winget; fallback MSI; fallback .NET tool
 #>
 
 [CmdletBinding()]
@@ -83,7 +83,7 @@ function Ensure-PowerPlatformCLI {
     return
   }
 
-  # 2) Default fallback: MSI (your preference)  [1](https://www.microsoft.com/content/dam/microsoft/msc/documents/presentations/nonprofits/pdfs/Microsoft-Nonprofit-Offers-Guide.pdf)[7](https://nonprofit.microsoft.com/en-us/getting-started)
+  # 2) Default fallback: MSI (your preference)
   if ($PacMsiPath -and (Test-Path $PacMsiPath)) {
     Write-Host "Installing Power Platform CLI via MSI: $PacMsiPath" -ForegroundColor Yellow
     Start-Process "msiexec.exe" -ArgumentList "/i `"$PacMsiPath`" /qn /norestart" -Wait
@@ -99,7 +99,7 @@ function Ensure-PowerPlatformCLI {
     Start-Process "https://learn.microsoft.com/en-us/power-platform/developer/howto/install-cli-msi" | Out-Null
   }
 
-  # 3) Secondary fallback: .NET tool  [2](https://support.techsoup.org/hc/en-us/articles/12968116130075-How-do-I-access-donated-and-discounted-Microsoft-for-Nonprofits-products-on-TechSoup)[8](https://learn.microsoft.com/en-us/industry/nonprofit/microsoft-for-nonprofits/nonprofit-offerings-products)
+  # 3) Secondary fallback: .NET tool
   if (Get-Command dotnet -ErrorAction SilentlyContinue) {
     Write-Host "Trying .NET tool fallback for Power Platform CLI..." -ForegroundColor Yellow
     & dotnet tool update --global Microsoft.PowerApps.CLI.Tool 2>$null
@@ -124,13 +124,13 @@ Ensure-Elevation
 
 Write-Host "=== Collvet Prereqs Installer ===" -ForegroundColor Cyan
 
-# Centralized Deployment module (Office add-ins)  [3](https://learn.microsoft.com/en-us/sharepoint/dev/features/hub-site/create-hub-site-with-powershell)[4](https://pnp.github.io/powershell/cmdlets/Register-PnPHubSite.html)
+# Centralized Deployment module (Office add-ins)
 Ensure-PSModule -Name "O365CentralizedAddInDeployment"
 
-# Graph SDK  [5](https://docs.github.com/en/copilot/how-tos/use-copilot-agents/coding-agent/review-copilot-prs)[6](https://docs.github.com/en/copilot/tutorials/explore-pull-requests)
+# Graph SDK
 Ensure-PSModule -Name "Microsoft.Graph" -MinimumVersion "2.0.0"
 
-# Power Platform CLI: winget → MSI (default fallback) → .NET tool fallback  [1](https://www.microsoft.com/content/dam/microsoft/msc/documents/presentations/nonprofits/pdfs/Microsoft-Nonprofit-Offers-Guide.pdf)[2](https://support.techsoup.org/hc/en-us/articles/12968116130075-How-do-I-access-donated-and-discounted-Microsoft-for-Nonprofits-products-on-TechSoup)
+# Power Platform CLI: winget → MSI (default fallback) → .NET tool fallback
 Ensure-PowerPlatformCLI
 
 Write-Host "✅ All requested prerequisites processed." -ForegroundColor Green
